@@ -6,7 +6,8 @@ import nbradham.blackjack.Game.Action;
 
 sealed abstract class Player permits TerminalPlayer {
 
-	int coin;
+	protected Game game;
+	protected int coin;
 
 	protected Player(final int startCoin) {
 		coin = startCoin;
@@ -19,4 +20,8 @@ sealed abstract class Player permits TerminalPlayer {
 	abstract short getBet();
 
 	abstract Action getAction(final HashSet<Action> availableActions);
+
+	void setGame(final Game setGame) {
+		game = setGame;
+	}
 }

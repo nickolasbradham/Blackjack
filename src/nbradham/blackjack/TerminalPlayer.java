@@ -33,7 +33,8 @@ final class TerminalPlayer extends Player {
 
 	@Override
 	Action getAction(final HashSet<Action> availableActions) {
-		StringBuilder sb = new StringBuilder("Available actions: ");
+		StringBuilder sb = new StringBuilder(String.format("Dealer Hand: %s%nPlayer Hand: %s%nAvailable actions: ",
+				game.getDealerHand(), game.getPlayerHands()));
 		for (Action a : availableActions)
 			switch (a) {
 			case DOUBLE:

@@ -53,6 +53,8 @@ final class Game {
 			playHands.add(second);
 			second.add(first.removeLast());
 			split = true;
+			availActs.remove(Action.SPLIT);
+			availActs.remove(Action.SURRENDER);
 		}
 		//TODO Continue
 	}

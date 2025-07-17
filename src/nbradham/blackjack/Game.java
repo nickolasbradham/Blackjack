@@ -38,41 +38,44 @@ final class Game {
 		dealDealer(draw());
 		dealCard(first);
 		// TODO Detect Blackjack.
-		HashSet<Action> availActs = new HashSet<>();
-		availActs.add(Action.HIT);
-		availActs.add(Action.STAND);
-		availActs.add(Action.SURRENDER);
-		if (player.getCoin() >= bet) {
-			availActs.add(Action.DOUBLE);
-			if (first.get(0).rank == first.get(1).rank)
-				availActs.add(Action.SPLIT);
-		}
-		final Action act = player.getAction(availActs, first.toArray(new Card[first.size()]));
-		boolean split = false;
-		if (act == Action.SPLIT) {
-			final ArrayList<Card> second = new ArrayList<>();
-			playHands.add(second);
-			second.add(first.removeLast());
-			split = true;
-			availActs.remove(Action.SPLIT);
-			availActs.remove(Action.SURRENDER);
-		}
-		for (ArrayList<Card> hand : playHands) {
-			if (split)
-				dealCard(hand);
-			while (true) {
-				switch (act) {
-				case DOUBLE:
-					break;
-				case HIT:
-					break;
-				case STAND:
-					break;
-				case SURRENDER:
+		if (first.get(0).rank.value + first.get(1).rank.value != 21) {
+			HashSet<Action> availActs = new HashSet<>();
+			availActs.add(Action.HIT);
+			availActs.add(Action.STAND);
+			availActs.add(Action.SURRENDER);
+			if (player.getCoin() >= bet) {
+				availActs.add(Action.DOUBLE);
+				if (first.get(0).rank == first.get(1).rank)
+					availActs.add(Action.SPLIT);
+			}
+			final Action act = player.getAction(availActs, first.toArray(new Card[first.size()]));
+			boolean split = false;
+			if (act == Action.SPLIT) {
+				final ArrayList<Card> second = new ArrayList<>();
+				playHands.add(second);
+				second.add(first.removeLast());
+				split = true;
+				availActs.remove(Action.SPLIT);
+				availActs.remove(Action.SURRENDER);
+			}
+			for (ArrayList<Card> hand : playHands) {
+				if (split)
+					dealCard(hand);
+				while (true) {
+					switch (act) {
+					case DOUBLE:
+						break;
+					case HIT:
+						break;
+					case STAND:
+						break;
+					case SURRENDER:
+					}
+					// TODO Continue
 				}
-				// TODO Continue
 			}
 		}
+		// TODO Do dealer.
 	}
 
 	private final void dealDealer(final Card card) {

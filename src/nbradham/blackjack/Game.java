@@ -1,7 +1,6 @@
 package nbradham.blackjack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Stack;
@@ -24,6 +23,7 @@ final class Game {
 		(player = setPlayer).setGame(this);
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	final void start() {
 		final short bet = player.getBet();
 		final Rank[] ranks = Rank.values();
@@ -34,9 +34,10 @@ final class Game {
 		dealDealer(draw().setHidden(true));
 		final ArrayList<Card> first = new ArrayList<>();
 		playHands.add(first);
-		dealCard(first, draw());
+		dealCard(first);
 		dealDealer(draw());
-		dealCard(first, draw());
+		dealCard(first);
+		// TODO Detect Blackjack.
 		HashSet<Action> availActs = new HashSet<>();
 		availActs.add(Action.HIT);
 		availActs.add(Action.STAND);
@@ -46,7 +47,7 @@ final class Game {
 			if (first.get(0).rank == first.get(1).rank)
 				availActs.add(Action.SPLIT);
 		}
-		final Action act = player.getAction(availActs);
+		final Action act = player.getAction(availActs, first.toArray(new Card[first.size()]));
 		boolean split = false;
 		if (act == Action.SPLIT) {
 			final ArrayList<Card> second = new ArrayList<>();
@@ -56,11 +57,30 @@ final class Game {
 			availActs.remove(Action.SPLIT);
 			availActs.remove(Action.SURRENDER);
 		}
-		//TODO Continue
+		for (ArrayList<Card> hand : playHands) {
+			if (split)
+				dealCard(hand);
+			while (true) {
+				switch (act) {
+				case DOUBLE:
+					break;
+				case HIT:
+					break;
+				case STAND:
+					break;
+				case SURRENDER:
+				}
+				// TODO Continue
+			}
+		}
 	}
 
 	private final void dealDealer(final Card card) {
 		dealCard(dealHand, card);
+	}
+
+	private final void dealCard(final ArrayList<Card> hand) {
+		dealCard(hand, draw());
 	}
 
 	private final void dealCard(final ArrayList<Card> hand, final Card card) {
@@ -71,12 +91,12 @@ final class Game {
 		return deck.pop();
 	}
 
-	final String getDealerHand() {
-		return dealHand.toString();
+	final Card[] getDealerHand() {
+		return dealHand.toArray(new Card[dealHand.size()]);
 	}
 
-	final String getPlayerHands() {
-		// TODO Auto-generated method stub
-		return null;
+	final Card[][] getPlayerHands() {
+		return playHands.parallelStream().map(hand -> hand.toArray(new Card[hand.size()]))
+				.toArray(size -> new Card[size][]);
 	}
 }

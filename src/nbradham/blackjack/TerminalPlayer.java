@@ -1,5 +1,6 @@
 package nbradham.blackjack;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
 
@@ -32,9 +33,9 @@ final class TerminalPlayer extends Player {
 	}
 
 	@Override
-	Action getAction(final HashSet<Action> availableActions) {
+	Action getAction(final HashSet<Action> availableActions, final Card[] hand) {
 		StringBuilder sb = new StringBuilder(String.format("Dealer Hand: %s%nPlayer Hand: %s%nAvailable actions: ",
-				game.getDealerHand(), game.getPlayerHands()));
+				Arrays.toString(game.getDealerHand()), Arrays.toString(hand)));
 		for (Action a : availableActions)
 			switch (a) {
 			case DOUBLE:

@@ -84,7 +84,7 @@ final class TerminalPlayer extends Player {
 	@Override
 	final void gain(final int money) {
 		super.gain(money);
-		System.out.printf("Dealer's hand: %s%nYour hand(s): %s%nYou recieved %d coin.%n", getDealerHand(),
+		System.out.printf("Dealer's hand: %s%nYour hand(s): %s%nYou received %d coin.%n", getDealerHand(),
 				Arrays.deepToString(game.getPlayerHands()), money);
 	}
 

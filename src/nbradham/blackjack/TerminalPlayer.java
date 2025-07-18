@@ -35,7 +35,7 @@ final class TerminalPlayer extends Player {
 	@Override
 	Action getAction(final HashSet<Action> availableActions, final Card[] hand) {
 		StringBuilder sb = new StringBuilder(String.format("Dealer Hand: %s%nPlayer Hand: %s%nAvailable actions: ",
-				Arrays.toString(game.getDealerHand()), Arrays.toString(hand)));
+				getDealerHand(), Arrays.toString(hand)));
 		for (Action a : availableActions)
 			switch (a) {
 			case DOUBLE:
@@ -79,5 +79,16 @@ final class TerminalPlayer extends Player {
 			else
 				System.out.println("Invalid selection.");
 		}
+	}
+
+	@Override
+	final void gain(final int money) {
+		super.gain(money);
+		System.out.printf("Dealer's hand: %s%nYour hand(s): %s%nYou recieved %d coin.%n", getDealerHand(),
+				Arrays.deepToString(game.getPlayerHands()), money);
+	}
+
+	private final String getDealerHand() {
+		return Arrays.toString(game.getDealerHand());
 	}
 }

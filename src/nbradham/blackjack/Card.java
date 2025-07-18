@@ -26,8 +26,8 @@ final class Card {
 
 	final Rank rank;
 
+	boolean hidden = false;
 	private final String str;
-	private boolean hidden = false;
 
 	Card(final Suit setSuit, final Rank setRank) {
 		str = (rank = setRank).str + setSuit.character;
@@ -40,6 +40,6 @@ final class Card {
 
 	@Override
 	public final String toString() {
-		return hidden ? "Secret" : str;
+		return hidden ? "##" : str;
 	}
 }

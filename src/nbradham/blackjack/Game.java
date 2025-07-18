@@ -17,7 +17,10 @@ final class Game {
 	private final Stack<Card> deck = new Stack<>();
 	private final ArrayList<ArrayList<Card>> playHands = new ArrayList<>();
 	private final ArrayList<Card> dealHand = new ArrayList<>();
+	private final HashSet<Action> availActs = new HashSet<>();
 	private final Player player;
+
+	private short bet;
 
 	Game(final Player setPlayer) {
 		(player = setPlayer).setGame(this);
@@ -25,7 +28,7 @@ final class Game {
 
 	@SuppressWarnings("incomplete-switch")
 	final void start() {
-		final short bet = player.getBet();
+		bet = player.getBet();
 		final Rank[] ranks = Rank.values();
 		for (Suit s : Suit.values())
 			for (Rank r : ranks)
@@ -37,45 +40,69 @@ final class Game {
 		dealCard(first);
 		dealDealer(draw());
 		dealCard(first);
-		// TODO Detect Blackjack.
-		if (first.get(0).rank.value + first.get(1).rank.value != 21) {
-			HashSet<Action> availActs = new HashSet<>();
+		final Rank firstRank = first.get(0).rank;
+		if (firstRank.value + first.get(1).rank.value != 21) {
 			availActs.add(Action.HIT);
 			availActs.add(Action.STAND);
 			availActs.add(Action.SURRENDER);
-			if (player.getCoin() >= bet) {
-				availActs.add(Action.DOUBLE);
-				if (first.get(0).rank == first.get(1).rank)
-					availActs.add(Action.SPLIT);
-			}
-			final Action act = player.getAction(availActs, first.toArray(new Card[first.size()]));
-			boolean split = false;
-			if (act == Action.SPLIT) {
-				final ArrayList<Card> second = new ArrayList<>();
-				playHands.add(second);
-				second.add(first.removeLast());
-				split = true;
-				availActs.remove(Action.SPLIT);
-				availActs.remove(Action.SURRENDER);
-			}
-			for (ArrayList<Card> hand : playHands) {
-				if (split)
-					dealCard(hand);
-				while (true) {
+			if (checkDouble() && first.get(0).rank == first.get(1).rank)
+				availActs.add(Action.SPLIT);
+		}
+		Action act = getAction(first);
+		boolean split = false;
+		if (act == Action.SPLIT) {
+			doubleBet();
+			final ArrayList<Card> second = new ArrayList<>();
+			playHands.add(second);
+			second.add(first.removeLast());
+			split = true;
+			availActs.remove(Action.SPLIT);
+			availActs.remove(Action.SURRENDER);
+		}
+		for (ArrayList<Card> hand : playHands) {
+			if (split)
+				dealCard(hand);
+			if (!split || firstRank != Rank.ACE) {
+				checkDouble();
+				loop: while (true) {
 					switch (act) {
 					case DOUBLE:
-						break;
+						dealCard(hand);
+						doubleBet();
+						break loop;
 					case HIT:
-						break;
+						dealCard(hand);
+						byte sum = 0, aces = 0;
+						for (Card c : hand) {
+							sum += c.rank.value;
+							if (c.rank == Rank.ACE)
+								++aces;
+						}
+						while (--aces != -1 && (sum -= 10) > 21)
+							;
+						if (sum >= 21)
+							break loop;
 					case STAND:
-						break;
+						break loop;
 					case SURRENDER:
+						player.gain(bet / 2);
+						return;
 					}
-					// TODO Continue
+					act = getAction(hand);
+					availActs.remove(Action.DOUBLE);
 				}
 			}
 		}
-		// TODO Do dealer.
+		// TODO Handle Dealer.
+	}
+
+	final Card[] getDealerHand() {
+		return dealHand.toArray(new Card[dealHand.size()]);
+	}
+
+	final Card[][] getPlayerHands() {
+		return playHands.parallelStream().map(hand -> hand.toArray(new Card[hand.size()]))
+				.toArray(size -> new Card[size][]);
 	}
 
 	private final void dealDealer(final Card card) {
@@ -94,12 +121,20 @@ final class Game {
 		return deck.pop();
 	}
 
-	final Card[] getDealerHand() {
-		return dealHand.toArray(new Card[dealHand.size()]);
+	private final Action getAction(ArrayList<Card> hand) {
+		return player.getAction(availActs, hand.toArray(new Card[hand.size()]));
 	}
 
-	final Card[][] getPlayerHands() {
-		return playHands.parallelStream().map(hand -> hand.toArray(new Card[hand.size()]))
-				.toArray(size -> new Card[size][]);
+	private final boolean checkDouble() {
+		if (player.getCoin() >= bet) {
+			availActs.add(Action.DOUBLE);
+			return true;
+		}
+		return false;
+	}
+
+	private final void doubleBet() {
+		player.coin -= bet;
+		bet <<= 1;
 	}
 }

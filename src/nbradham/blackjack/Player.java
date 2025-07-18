@@ -17,11 +17,15 @@ sealed abstract class Player permits TerminalPlayer {
 		return coin;
 	}
 
-	abstract short getBet();
-
-	abstract Action getAction(final HashSet<Action> availableActions, final Card[] hand);
-
 	void setGame(final Game setGame) {
 		game = setGame;
 	}
+
+	void gain(final int money) {
+		coin += money;
+	}
+
+	abstract short getBet();
+
+	abstract Action getAction(final HashSet<Action> availableActions, final Card[] hand);
 }

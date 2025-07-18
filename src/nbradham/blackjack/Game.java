@@ -30,7 +30,6 @@ final class Game {
 		(player = setPlayer).setGame(this);
 	}
 
-	@SuppressWarnings("incomplete-switch")
 	final void start() {
 		System.out.printf("Seed: %d%n", SEED);
 		final short bet = player.getBet();
@@ -158,12 +157,12 @@ final class Game {
 		return deck.pop();
 	}
 
-	private final Action getAction(Hand hand) {
+	private final Action getAction(final Hand hand) {
 		return player.getAction(availActs, hand.cards.toArray(new Card[hand.cards.size()]));
 	}
 
 	private final boolean checkDouble() {
-		if (player.getCoin() >= bet) {
+		if (player.coin >= bet) {
 			availActs.add(Action.DOUBLE);
 			return true;
 		}
@@ -210,7 +209,7 @@ final class Game {
 		private Hand() {
 		}
 
-		private Hand(short setBet) {
+		private Hand(final short setBet) {
 			bet = setBet;
 		}
 	}

@@ -33,7 +33,7 @@ final class Card {
 		str = (rank = setRank).str + setSuit.character;
 	}
 
-	Card setHidden(boolean setHidden) {
+	Card setHidden(final boolean setHidden) {
 		hidden = setHidden;
 		return this;
 	}

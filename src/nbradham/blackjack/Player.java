@@ -6,15 +6,11 @@ import nbradham.blackjack.Game.Action;
 
 sealed abstract class Player permits TerminalPlayer {
 
-	protected Game game;
-	protected int coin;
+	Game game;
+	int coin;
 
 	protected Player(final int startCoin) {
 		coin = startCoin;
-	}
-
-	final int getCoin() {
-		return coin;
 	}
 
 	void setGame(final Game setGame) {

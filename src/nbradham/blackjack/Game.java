@@ -80,6 +80,7 @@ final class Game {
 							dealCard(hand);
 							takeCoin();
 							hand.bet <<= 1;
+							act = Action.SPLIT;
 							break loop;
 						case HIT:
 							dealCard(hand);
@@ -87,6 +88,7 @@ final class Game {
 								break loop;
 							break;
 						case STAND:
+							act = Action.SPLIT;
 							break loop;
 						case SURRENDER:
 							player.gain(bet / 2);
